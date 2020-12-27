@@ -1,7 +1,6 @@
 import 'package:ecommerce_sample/ApiFunctions/Api.dart';
 import 'package:ecommerce_sample/model/categories_model.dart'as category;
 import 'package:ecommerce_sample/ui/subcategories/category_products.dart';
-import 'package:ecommerce_sample/ui/subcategories/furniture_subcategory_screen.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';

@@ -177,8 +177,8 @@ class Data {
 }
 
 class Links {
-  String url;
-  String label;
+  dynamic url;
+  dynamic label;
   bool active;
 
   Links({this.url, this.label, this.active});

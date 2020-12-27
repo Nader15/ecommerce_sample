@@ -1,4 +1,3 @@
-import 'package:ecommerce_sample/ui/subcategories/furniture_subcategory_screen.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';
