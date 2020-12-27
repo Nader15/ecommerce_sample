@@ -1,13 +1,12 @@
-import 'package:ecommerce_sample/model/products.dart';
+
 import 'package:ecommerce_sample/model/subCategory.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:flutter/material.dart';
 
 class CategoryDetails extends StatelessWidget {
-  final Product product;
   final SubCategory subCategory;
 
-  const CategoryDetails({Key key, this.product, this.subCategory})
+  const CategoryDetails({Key key, this.subCategory})
       : super(key: key);
 
   @override
@@ -38,7 +37,6 @@ class CategoryDetails extends StatelessWidget {
       body: SingleChildScrollView(
         child: Body(
           subCategory: subCategory,
-          product: product,
         ),
       ),
     );
@@ -46,10 +44,9 @@ class CategoryDetails extends StatelessWidget {
 }
 
 class Body extends StatelessWidget {
-  final Product product;
   final SubCategory subCategory;
 
-  const Body({Key key, this.product, this.subCategory}) : super(key: key);
+  const Body({Key key, this.subCategory}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

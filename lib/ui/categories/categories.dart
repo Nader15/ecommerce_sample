@@ -1,12 +1,52 @@
+import 'package:ecommerce_sample/ApiFunctions/Api.dart';
+import 'package:ecommerce_sample/model/categories_model.dart'as category;
+import 'package:ecommerce_sample/ui/subcategories/category_products.dart';
 import 'package:ecommerce_sample/ui/subcategories/furniture_subcategory_screen.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';
+import 'package:xs_progress_hud/xs_progress_hud.dart';
 
-class HomeScreen extends StatelessWidget {
+class Categories extends StatefulWidget {
+  @override
+  _CategoriesState createState() => _CategoriesState();
+}
+
+class _CategoriesState extends State<Categories> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  category.CategoriesModel categoriesModel;
+  List <category.Success> categoriesList=List();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed( Duration(milliseconds: 0), () {
+      gettingData();
+
+    });
+
+//    showHud();
+  }
+  gettingData(){
+    setState(() {
+      Api(context).categoriesApi(_scaffoldKey).then((value) {
+
+        categoriesModel=value;
+        categoriesModel.success.forEach((element) {
+
+          setState(() {
+            categoriesList.add(element);
+          });
+        });
+
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: whiteColor,
         elevation: 0,
@@ -44,9 +84,15 @@ class HomeScreen extends StatelessWidget {
             SizedBox(
               height: 30,
             ),
-            Expanded(
+            categoriesList.length==0
+                ? Center(
+                  child: Container(
+              child: Text("No data found"),
+            ),
+                )
+                : Expanded(
               child: GridView.builder(
-                itemCount: 1,
+                itemCount: categoriesList.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.70,
@@ -54,7 +100,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisSpacing: 20,
                 ),
                 itemBuilder: (context, index) {
-                  return ItemCard();
+                  return Category(index);
                 },
               ),
             ),
@@ -63,24 +109,18 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-class ItemCard extends StatelessWidget {
-   final Function press;
-
-  const ItemCard({Key key, this.press}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget Category(int index){
     return GestureDetector(
-      onTap: press,
+      onTap: (){
+        navigateAndKeepStack(context, CategoryProducts(categoriesList[index]));
+      },
       child: Column(
         children: [
           Container(
             height: 180,
             width: 160,
             decoration: BoxDecoration(
-                color:Colors.green,
+                color: Colors.green,
                 borderRadius: BorderRadius.circular(15),
                 image: DecorationImage(
                   image: NetworkImage("https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"),
@@ -91,11 +131,21 @@ class ItemCard extends StatelessWidget {
             height: 5,
           ),
           Text(
-            "product.title",
+            "${categoriesList[index].name}",
             style: TextStyle(color: greyColorXd, fontSize: 17),
           )
         ],
       ),
     );
+  }
+  Future<void> showMessageHud() async {
+    XsProgressHud.showMessage(context, "Flutter app");
+  }
+
+  Future<void> showHud() async {
+    XsProgressHud.show(context);
+    Future.delayed(Duration(milliseconds: 2000)).then((val) {
+      showMessageHud();
+    });
   }
 }

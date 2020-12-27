@@ -1,16 +1,14 @@
-import 'package:ecommerce_sample/model/products.dart';
 import 'package:ecommerce_sample/model/subCategory.dart';
-import 'file:///C:/Users/nader/AndroidStudioProjects/GitHub/ecommerce_sample/lib/ui/categories_details/furniture_category_details_screen.dart';
+import 'package:ecommerce_sample/ui/categories/furniture_category_details_screen.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';
 
 class SubCategoryScreen extends StatelessWidget {
-  final Product product;
   final SubCategory subCategory;
   final Function press;
 
-  const SubCategoryScreen({Key key, this.product, this.press, this.subCategory})
+  const SubCategoryScreen({Key key, this.press, this.subCategory})
       : super(key: key);
 
   @override
@@ -18,7 +16,7 @@ class SubCategoryScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
-        backgroundColor: product.color.withOpacity(0),
+        backgroundColor:Colors.red,
         elevation: 0,
         leading: Icon(
           Icons.keyboard_backspace,
@@ -43,7 +41,6 @@ class SubCategoryScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               return SubCategories(
                 subCategories: furnitureSubCategories[index],
-                product: products[index],
                 press: () => navigateAndKeepStack(
                     context,
                     CategoryDetails(
@@ -58,11 +55,10 @@ class SubCategoryScreen extends StatelessWidget {
 }
 
 class SubCategories extends StatelessWidget {
-  final Product product;
   final SubCategory subCategories;
   final Function press;
 
-  const SubCategories({Key key, this.product, this.subCategories, this.press})
+  const SubCategories({Key key, this.subCategories, this.press})
       : super(key: key);
 
   @override
