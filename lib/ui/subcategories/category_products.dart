@@ -1,8 +1,7 @@
 import 'package:ecommerce_sample/ApiFunctions/Api.dart';
 import 'package:ecommerce_sample/model/categories_model.dart' as categoryModel;
 import 'package:ecommerce_sample/model/category_products_model.dart';
-import 'package:ecommerce_sample/model/subCategory.dart';
-import 'package:ecommerce_sample/ui/categories/furniture_category_details_screen.dart';
+import 'file:///C:/Users/nader/AndroidStudioProjects/GitHub/ecommerce_sample/lib/ui/product_details/product_details.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +84,9 @@ class _CategoryProductsState extends State<CategoryProducts> {
 
   Widget Products(int index) {
     return ListTile(
-      onTap: () {},
+      onTap: () {
+        navigateAndKeepStack(context, CategoryDetails(categoryProductsList[index]));
+      },
       leading: Container(
         height: 80,
         width: 100,

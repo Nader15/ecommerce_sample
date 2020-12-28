@@ -1,19 +1,72 @@
-
-import 'package:ecommerce_sample/model/subCategory.dart';
+import 'package:ecommerce_sample/ApiFunctions/Api.dart';
+import 'package:ecommerce_sample/model/cart_model.dart';
+import 'package:ecommerce_sample/model/categories_model.dart' as categoryModel;
+import 'package:ecommerce_sample/model/category_products_model.dart';
+import 'package:ecommerce_sample/ui/cart.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
+import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';
 
-class CategoryDetails extends StatelessWidget {
-  final SubCategory subCategory;
+class CategoryDetails extends StatefulWidget {
+  Data success;
 
-  const CategoryDetails({Key key, this.subCategory})
-      : super(key: key);
+  CategoryDetails(this.success);
+
+  @override
+  _CategoryDetailsState createState() => _CategoryDetailsState();
+}
+
+class _CategoryDetailsState extends State<CategoryDetails> {
+  CartModel cart;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> scafoldState = new GlobalKey<ScaffoldState>();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  ProductsModel productsModel;
+  List<Data> categoryProductsList = List();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration(milliseconds: 0), () {
+      gettingData();
+    });
+
+//    showHud();
+  }
+
+  gettingData() {
+    setState(() {
+      Api(context).categoryProductsApi(_scaffoldKey).then((value) {
+        productsModel = value;
+        productsModel.success.data.forEach((element) {
+          setState(() {
+            categoryProductsList.add(element);
+          });
+        });
+      });
+    });
+  }
+
+  addToCartApi() {
+    setState(() {
+      Api(context).addToCart(_scaffoldKey).then((value) {
+        productsModel = value;
+        productsModel.success.data.forEach((element) {
+          setState(() {
+            categoryProductsList.add(element);
+          });
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scafoldState,
       appBar: AppBar(
-        backgroundColor: subCategory.color.withOpacity(0.0),
+        backgroundColor: Colors.grey,
         elevation: 0,
         leading: Icon(
           Icons.keyboard_backspace,
@@ -26,30 +79,28 @@ class CategoryDetails extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              navigateAndKeepStack(context, Cart());
+            },
             icon: Icon(
               Icons.shopping_cart,
             ),
           ),
         ],
       ),
-      backgroundColor: subCategory.color,
+      backgroundColor: Colors.grey,
       body: SingleChildScrollView(
-        child: Body(
-          subCategory: subCategory,
-        ),
+        child: categoryProductsList.length == 0
+            ? Center(child: Container(child: Text("Loading data ..")))
+            : Form(
+          key: formKey,
+                child: Body(2),
+              ),
       ),
     );
   }
-}
 
-class Body extends StatelessWidget {
-  final SubCategory subCategory;
-
-  const Body({Key key, this.subCategory}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget Body(int index) {
     return Column(
       children: [
         SizedBox(
@@ -76,7 +127,7 @@ class Body extends StatelessWidget {
                       style: TextStyle(color: whiteColor),
                     ),
                     Text(
-                      "${subCategory.title}",
+                      "${categoryProductsList[index].name}",
                       style: TextStyle(
                           color: whiteColor,
                           fontSize: 30,
@@ -91,7 +142,7 @@ class Body extends StatelessWidget {
                           text: TextSpan(children: [
                             TextSpan(text: "Price\n"),
                             TextSpan(
-                                text: "\$${subCategory.price}",
+                                text: "\$${categoryProductsList[index].price}",
                                 style: TextStyle(
                                     fontSize: 30, fontWeight: FontWeight.bold)),
                           ]),
@@ -107,7 +158,8 @@ class Body extends StatelessWidget {
                                 color: Colors.red,
                                 borderRadius: BorderRadius.circular(30),
                                 image: DecorationImage(
-                                  image: AssetImage(subCategory.image),
+                                  image: NetworkImage(
+                                      "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"),
                                   fit: BoxFit.cover,
                                 )),
                           ),
@@ -123,23 +175,37 @@ class Body extends StatelessWidget {
                     ),
                     Container(
                       height: 100,
-                      child: Text("${subCategory.description}",style: TextStyle(fontSize: 18),),
+                      child: Text(
+                        "${categoryProductsList[index].description}",
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 100),
                       child: Row(
                         children: [
-                          Container(
-                            margin: EdgeInsets.only(right: 20),
-                            height: 50,
-                            width: 58,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(color: subCategory.color)),
-                            child: Icon(
-                              Icons.shopping_cart,
-                              color: subCategory.color,
-                              size: 25,
+                          GestureDetector(
+                            onTap: () {
+                              Api(context)
+                                  .addToCart(scafoldState)
+                                  .then((value) {
+                                if (value is CartModel) {
+                                  cart = value;
+                                }
+                              });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(right: 20),
+                              height: 50,
+                              width: 58,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  border: Border.all(color: Colors.grey)),
+                              child: Icon(
+                                Icons.shopping_cart,
+                                color: Colors.grey,
+                                size: 25,
+                              ),
                             ),
                           ),
                           Expanded(
@@ -148,7 +214,7 @@ class Body extends StatelessWidget {
                               child: FlatButton(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20)),
-                                color: subCategory.color,
+                                color: Colors.green,
                                 onPressed: () {},
                                 child: Text(
                                   "Buy Now",
@@ -173,6 +239,19 @@ class Body extends StatelessWidget {
       ],
     );
   }
+}
+
+SizedBox buildOutLineButton(IconData icon, Function press) {
+  return SizedBox(
+    width: 40,
+    height: 30,
+    child: OutlineButton(
+      padding: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      onPressed: press,
+      child: Icon(icon),
+    ),
+  );
 }
 
 class CartCounter extends StatefulWidget {
@@ -212,17 +291,4 @@ class _CartCounterState extends State<CartCounter> {
       ],
     );
   }
-}
-
-SizedBox buildOutLineButton(IconData icon, Function press) {
-  return SizedBox(
-    width: 40,
-    height: 30,
-    child: OutlineButton(
-      padding: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      onPressed: press,
-      child: Icon(icon),
-    ),
-  );
 }

@@ -24,7 +24,6 @@ class _CategoriesState extends State<Categories> {
       gettingData();
 
     });
-
 //    showHud();
   }
   gettingData(){
@@ -38,7 +37,6 @@ class _CategoriesState extends State<Categories> {
             categoriesList.add(element);
           });
         });
-
       });
     });
   }
