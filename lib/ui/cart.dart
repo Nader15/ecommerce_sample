@@ -1,6 +1,7 @@
 import 'package:ecommerce_sample/ApiFunctions/Api.dart';
-import 'package:ecommerce_sample/model/cart_model.dart' ;
-import 'package:ecommerce_sample/model/cart_model.dart';
+
+import 'package:ecommerce_sample/model/cart_content_model.dart';
+import 'package:ecommerce_sample/model/cart_content_model.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  CartModel cartModel;
+  CartContentModel cartContentModel;
   List<Success> cartList = List();
 
   @override
@@ -27,9 +28,9 @@ class _CartState extends State<Cart> {
 
   gettingData() {
     setState(() {
-      Api(context).cartDetails(_scaffoldKey).then((value) {
-        cartModel = value;
-        cartModel.success.forEach((element) {
+      Api(context).cartContent(_scaffoldKey).then((value) {
+        cartContentModel = value;
+        cartContentModel.success.forEach((element) {
           setState(() {
             cartList.add(element);
           });
@@ -45,8 +46,13 @@ class _CartState extends State<Cart> {
         appBar: AppBar(
           backgroundColor: Colors.grey,
           elevation: 0,
-          leading: Icon(
-            Icons.keyboard_backspace,
+          leading: IconButton(
+            onPressed:(){
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.keyboard_backspace,
+            ),
           ),
          title: Text("Cart"),
           centerTitle: true,
@@ -58,20 +64,25 @@ class _CartState extends State<Cart> {
               child: Text("No data found"),
             ),
           )
-              : Expanded(
-                  child: GridView.builder(
-                    itemCount: cartList.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.70,
-                      mainAxisSpacing: 0.3,
-                      crossAxisSpacing: 20,
-                    ),
-                    itemBuilder: (context, index) {
-                      return CartList(index);
-                    },
-                  ),
+              : Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: GridView.builder(
+                itemCount: cartList.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                  childAspectRatio: 4,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: .5,
                 ),
+                itemBuilder: (context, index) {
+                  return CartList(index);
+                },
+              ),
+            ),
+          ),
         ));
   }
 
@@ -79,7 +90,7 @@ class _CartState extends State<Cart> {
     return ListTile(
       onTap: () {},
       leading: Container(
-        height: 80,
+        height: 100,
         width: 100,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
@@ -89,33 +100,50 @@ class _CartState extends State<Cart> {
               fit: BoxFit.cover,
             )),
       ),
-      title: Text(
-        "${cartList[index].productId}",
-        style: TextStyle(fontSize: 18, color: whiteColor),
-      ),
-      subtitle: Row(
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Amount ",
-            style: TextStyle(fontSize: 18, color: whiteColor),
+            "${cartList[index].product.name}",
+            style: TextStyle(fontSize: 18, color: blackColor),
           ),
-          Text(
-            "${cartList[index].amount}",
-            style: TextStyle(fontSize: 20, color: whiteColor),
+          Row(
+            children: [
+              Text(
+                "Amount ",
+                style: TextStyle(fontSize: 18, color: blackColor),
+              ),
+              Text(
+                "(${cartList[index].amount})",
+                style: TextStyle(fontSize: 20, color: blackColor),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                "Price ",
+                style: TextStyle(fontSize: 18, color: blackColor),
+              ),
+              Text(
+                "\$${cartList[index].product.price}",
+                style: TextStyle(fontSize: 20, color: blackColor),
+              ),
+            ],
           ),
         ],
       ),
       trailing: Container(
         height: 40,
         width: 48,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            border: Border.all(color: whiteColor)),
-        child: Icon(
-          Icons.shopping_cart,
-          color: whiteColor,
-          size: 25,
-        ),
+        child: IconButton(
+          onPressed: (){},
+          icon: Icon(
+            Icons.remove_circle_outline,
+            color: redColor,
+            size: 25,
+          ),
+        )
       ),
     );
   }

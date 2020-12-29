@@ -1,5 +1,5 @@
 import 'package:ecommerce_sample/ApiFunctions/Api.dart';
-import 'package:ecommerce_sample/model/cart_model.dart';
+import 'package:ecommerce_sample/model/add_to_cart_model.dart';
 import 'package:ecommerce_sample/model/categories_model.dart' as categoryModel;
 import 'package:ecommerce_sample/model/category_products_model.dart';
 import 'package:ecommerce_sample/ui/cart.dart';
@@ -17,7 +17,7 @@ class CategoryDetails extends StatefulWidget {
 }
 
 class _CategoryDetailsState extends State<CategoryDetails> {
-  CartModel cart;
+  AddToCartModel cart;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<ScaffoldState> scafoldState = new GlobalKey<ScaffoldState>();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -68,8 +68,13 @@ class _CategoryDetailsState extends State<CategoryDetails> {
       appBar: AppBar(
         backgroundColor: Colors.grey,
         elevation: 0,
-        leading: Icon(
-          Icons.keyboard_backspace,
+        leading:IconButton(
+          onPressed:(){
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.keyboard_backspace,
+          ),
         ),
         actions: [
           IconButton(
@@ -94,149 +99,154 @@ class _CategoryDetailsState extends State<CategoryDetails> {
             ? Center(child: Container(child: Text("Loading data ..")))
             : Form(
           key: formKey,
-                child: Body(2),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (context ,index){
+                      return Body(index);
+                    },
+                  ),
+                )
               ),
       ),
     );
   }
 
   Widget Body(int index) {
-    return Column(
-      children: [
-        SizedBox(
-          child: Stack(
-            children: [
-              Container(
-                margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height / 2.9),
-                height: MediaQuery.of(context).size.height / 1.865,
-                decoration: BoxDecoration(
-                    color: whiteColor,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(25),
-                      topLeft: Radius.circular(25),
-                    )),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Category Name",
-                      style: TextStyle(color: whiteColor),
-                    ),
-                    Text(
-                      "${categoryProductsList[index].name}",
-                      style: TextStyle(
-                          color: whiteColor,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        RichText(
-                          text: TextSpan(children: [
-                            TextSpan(text: "Price\n"),
-                            TextSpan(
-                                text: "\$${categoryProductsList[index].price}",
-                                style: TextStyle(
-                                    fontSize: 30, fontWeight: FontWeight.bold)),
-                          ]),
-                        ),
-                        SizedBox(
-                          width: 40,
-                        ),
-                        Expanded(
-                          child: Container(
-                            height: 180,
-                            width: 160,
-                            decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(30),
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                      "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"),
-                                  fit: BoxFit.cover,
-                                )),
-                          ),
-                        ),
-                      ],
+    return SizedBox(
+      child: Stack(
+        children: [
+          Container(
+            margin: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height / 2.9),
+            height: MediaQuery.of(context).size.height / 1.865,
+            decoration: BoxDecoration(
+                color: whiteColor,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(25),
+                  topLeft: Radius.circular(25),
+                )),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Category Name",
+                  style: TextStyle(color: whiteColor),
+                ),
+                Text(
+                  "${categoryProductsList[index].name}",
+                  style: TextStyle(
+                      color: whiteColor,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 50,
+                ),
+                Row(
+                  children: <Widget>[
+                    RichText(
+                      text: TextSpan(children: [
+                        TextSpan(text: "Price\n"),
+                        TextSpan(
+                            text: "\$${categoryProductsList[index].price}",
+                            style: TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold)),
+                      ]),
                     ),
                     SizedBox(
-                      height: 20,
+                      width: 40,
                     ),
-                    CartCounter(),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      height: 100,
-                      child: Text(
-                        "${categoryProductsList[index].description}",
-                        style: TextStyle(fontSize: 18),
+                    Expanded(
+                      child: Container(
+                        height: 180,
+                        width: 160,
+                        decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(30),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                  "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"),
+                              fit: BoxFit.cover,
+                            )),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 100),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Api(context)
-                                  .addToCart(scafoldState)
-                                  .then((value) {
-                                if (value is CartModel) {
-                                  cart = value;
-                                }
-                              });
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(right: 20),
-                              height: 50,
-                              width: 58,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(color: Colors.grey)),
-                              child: Icon(
-                                Icons.shopping_cart,
-                                color: Colors.grey,
-                                size: 25,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: SizedBox(
-                              height: 50,
-                              child: FlatButton(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
-                                color: Colors.green,
-                                onPressed: () {},
-                                child: Text(
-                                  "Buy Now",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: whiteColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    )
                   ],
                 ),
-              )
-            ],
-          ),
-        )
-      ],
+                SizedBox(
+                  height: 20,
+                ),
+                CartCounter(),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  height: 100,
+                  child: Text(
+                    "${categoryProductsList[index].description}",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 100),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Api(context)
+                              .addToCart(scafoldState)
+                              .then((value) {
+                            if (value is AddToCartModel) {
+                              cart = value;
+                            }
+                          });
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(right: 20),
+                          height: 50,
+                          width: 58,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(color: Colors.grey)),
+                          child: Icon(
+                            Icons.shopping_cart,
+                            color: Colors.grey,
+                            size: 25,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          height: 50,
+                          child: FlatButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            color: Colors.green,
+                            onPressed: () {},
+                            child: Text(
+                              "Buy Now",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: whiteColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }

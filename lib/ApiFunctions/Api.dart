@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:ecommerce_sample/ApiFunctions/sharedPrefClass.dart';
-import 'package:ecommerce_sample/model/cart_model.dart';
+import 'package:ecommerce_sample/model/add_to_cart_model.dart';
+import 'package:ecommerce_sample/model/cart_content_model.dart';
 import 'package:ecommerce_sample/model/categories_model.dart';
 import 'package:ecommerce_sample/model/category_products_model.dart';
 import 'package:ecommerce_sample/ui/error401_page.dart';
@@ -75,7 +76,7 @@ class Api {
     }
   }
 
-  Future cartDetails(GlobalKey<ScaffoldState> _scaffoldKey) async {
+  Future cartContent(GlobalKey<ScaffoldState> _scaffoldKey) async {
     XsProgressHud.show(context);
     final String apiUrl = baseUrl + cartLink;
     var data = {
@@ -91,7 +92,7 @@ class Api {
     XsProgressHud.hide();
     if (response.statusCode == 200) {
       print( "body :"+json.decode(response.body).toString());
-      return CartModel.fromJson(dataContent);
+      return CartContentModel.fromJson(dataContent);
     } else {
       print( "body :"+json.decode(response.body).toString());
       CustomSnackBar(_scaffoldKey,
@@ -120,7 +121,7 @@ class Api {
       CustomSnackBar(_scaffoldKey,
           json.decode(response.body).toString());
       print(json.decode(response.body));
-      return CartModel.fromJson(dataContent);
+      return AddToCartModel.fromJson(dataContent);
     } else {
       CustomSnackBar(_scaffoldKey,
           json.decode(response.body).toString());

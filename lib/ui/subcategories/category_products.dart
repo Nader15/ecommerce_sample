@@ -51,34 +51,35 @@ class _CategoryProductsState extends State<CategoryProducts> {
       appBar: AppBar(
         backgroundColor: Colors.grey,
         elevation: 0,
-        leading: Icon(
-          Icons.keyboard_backspace,
-          color: whiteColor,
+        leading: IconButton(
+          onPressed:(){
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.keyboard_backspace,
+          ),
         ),
         title: Text("Sub-category"),
         centerTitle: true,
       ),
       body: categoryProductsList.length == 0
           ? Center(child: Container(child: Text("No data found")))
-          : Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: GridView.builder(
-                  itemCount: categoryProductsList.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    childAspectRatio: 4,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: .5,
-                  ),
-                  itemBuilder: (context, index) {
-                    return Products(index);
-                  },
-                ),
+          : Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: GridView.builder(
+              itemCount: categoryProductsList.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                childAspectRatio: 4,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: .5,
               ),
+              itemBuilder: (context, index) {
+                return Products(index);
+              },
             ),
+          ),
     );
   }
 
