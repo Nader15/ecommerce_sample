@@ -47,18 +47,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     });
   }
 
-  addToCartApi() {
-    setState(() {
-      Api(context).addToCart(_scaffoldKey).then((value) {
-        productsModel = value;
-        productsModel.success.data.forEach((element) {
-          setState(() {
-            categoryProductsList.add(element);
-          });
-        });
-      });
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -198,7 +187,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                       GestureDetector(
                         onTap: () {
                           Api(context)
-                              .addToCart(scafoldState)
+                              .addToCart(scafoldState,1)
                               .then((value) {
                             if (value is AddToCartModel) {
                               cart = value;
