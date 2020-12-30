@@ -7,7 +7,7 @@ String UserAuthAttend="UserAuthAttend";
 Future<String> getUserAttend(BuildContext context,) async {
   // save the chosen locale
   var prefs = await SharedPreferences.getInstance();
-  GlobalVars.Userattend="${prefs.getString(UserAuthAttend)}";
+ Userattend="${prefs.getString(UserAuthAttend)}";
   return prefs.getString(UserAuthAttend);
 
 }

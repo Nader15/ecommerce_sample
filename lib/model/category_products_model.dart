@@ -101,6 +101,7 @@ class Success {
 
 class Data {
   int id;
+  int count=0;
   dynamic createdAt;
   dynamic updatedAt;
   String name;
@@ -119,6 +120,7 @@ class Data {
 
   Data(
       {this.id,
+        this.count,
         this.createdAt,
         this.updatedAt,
         this.name,

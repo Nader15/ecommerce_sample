@@ -1,6 +1,6 @@
 
-class GlobalVars {
-  static String Userattend = "";
-  int listIndex ;
 
-}
+    String Userattend = "";
+     int totalCount=0 ;
+
+
