@@ -1,7 +1,9 @@
 import 'package:ecommerce_sample/ApiFunctions/Api.dart';
+import 'package:ecommerce_sample/model/add_to_cart_model.dart';
 
 import 'package:ecommerce_sample/model/cart_content_model.dart';
-import 'package:ecommerce_sample/model/cart_content_model.dart';
+import 'package:ecommerce_sample/model/cart_content_model.dart'as cartContent;
+import 'package:ecommerce_sample/model/category_products_model.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +16,7 @@ class Cart extends StatefulWidget {
 class _CartState extends State<Cart> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   CartContentModel cartContentModel;
-  List<Success> cartList = List();
+  List<cartContent.Success> cartList = List();
 
   @override
   void initState() {
@@ -142,17 +144,9 @@ class _CartState extends State<Cart> {
                     style: TextStyle(fontSize: 20, color: blackColor),
                   ),
                   Container(
-                    width: 25,
-                    height: 25,
-                    decoration: BoxDecoration(
-                      color: grey,
-                      shape: BoxShape.circle
-                    ),
-                    child: Icon(
-                      Icons.edit_outlined,
-                      color: whiteColor,
-                      size: 20,
-                    ),
+                    width: 40,
+                    height: 50,
+                    child: CartCounter(index: index),
                   ),
                 ],
               ),
@@ -160,6 +154,72 @@ class _CartState extends State<Cart> {
           ),
         ),
         Divider(),
+      ],
+    );
+  }
+}
+
+class CartCounter extends StatefulWidget {
+  int index ;
+  CartCounter({this.index});
+
+  @override
+  _CartCounterState createState() => _CartCounterState();
+}
+class _CartCounterState extends State<CartCounter> {
+  int noOfItems = 00;
+  AddToCartModel cart;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  ProductsModel productsModel;
+  List<Data> categoryProductsList = List();
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: (){
+            if (noOfItems > 0) {
+              setState(() {
+                noOfItems--;
+              });
+            }
+          },
+          child: Container(
+            width: 20,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: grey)
+              ),
+              child: Icon(Icons.remove,size: 15,)
+          ),
+        ),
+        Padding(
+          padding:EdgeInsets.zero,
+          child: Text(noOfItems.toString().padLeft(2, "0")),
+        ),
+        GestureDetector(
+          onTap: (){
+            setState(() {
+              noOfItems++;
+              Api(context)
+                  .addToCart(_scaffoldKey, categoryProductsList[1].id)
+                  .then((value) {
+                if (value is AddToCartModel) {
+                  cart = value;
+                }
+              });
+            });
+          },
+          child: Container(
+            width: 20,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: grey)
+              ),
+              child: Icon(Icons.add,size: 15,)
+          ),
+        ),
       ],
     );
   }
