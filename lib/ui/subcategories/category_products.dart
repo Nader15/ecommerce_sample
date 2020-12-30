@@ -1,7 +1,7 @@
 import 'package:ecommerce_sample/ApiFunctions/Api.dart';
 import 'package:ecommerce_sample/model/categories_model.dart' as categoryModel;
 import 'package:ecommerce_sample/model/category_products_model.dart';
-import 'file:///C:/Users/nader/AndroidStudioProjects/GitHub/ecommerce_sample/lib/ui/product_details/product_details.dart';
+import 'package:ecommerce_sample/ui/product_details/product_details.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';
@@ -47,9 +47,10 @@ class _CategoryProductsState extends State<CategoryProducts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      floatingActionButton: _buildFloatingButton(),
+      backgroundColor: whiteColor,
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: whiteColor,
         elevation: 0,
         leading: IconButton(
           onPressed:(){
@@ -59,7 +60,7 @@ class _CategoryProductsState extends State<CategoryProducts> {
             Icons.keyboard_backspace,
           ),
         ),
-        title: Text("Sub-category"),
+        title: Text("Products"),
         centerTitle: true,
       ),
       body: categoryProductsList.length == 0
@@ -86,7 +87,7 @@ class _CategoryProductsState extends State<CategoryProducts> {
   Widget Products(int index) {
     return ListTile(
       onTap: () {
-        navigateAndKeepStack(context, CategoryDetails(categoryProductsList[index]));
+        navigateAndKeepStack(context, ProductDetails(categoryProductsList[index]));
       },
       leading: Container(
         height: 80,
@@ -101,21 +102,29 @@ class _CategoryProductsState extends State<CategoryProducts> {
       ),
       title: Text(
         "${categoryProductsList[index].name}",
-        style: TextStyle(fontSize: 18, color: whiteColor),
+        style: TextStyle(fontSize: 18, color: blackColor),
       ),
       subtitle: Row(
         children: [
           Text(
             "Price ",
-            style: TextStyle(fontSize: 18, color: whiteColor),
+            style: TextStyle(fontSize: 18, color: blackColor),
           ),
           Text(
             "\$ " + "${categoryProductsList[index].price}",
-            style: TextStyle(fontSize: 20, color: whiteColor),
+            style: TextStyle(fontSize: 20, color: blackColor),
           ),
         ],
       ),
-      trailing: Container(
+    );
+  }
+  Widget _buildFloatingButton(){
+    return RaisedButton(
+      padding: EdgeInsets.zero,
+      onPressed: (){
+      },
+      elevation: 0,
+      child: Container(
         height: 40,
         width: 48,
         decoration: BoxDecoration(
@@ -123,7 +132,7 @@ class _CategoryProductsState extends State<CategoryProducts> {
             border: Border.all(color: whiteColor)),
         child: Icon(
           Icons.shopping_cart,
-          color: whiteColor,
+          color: blackColor,
           size: 25,
         ),
       ),

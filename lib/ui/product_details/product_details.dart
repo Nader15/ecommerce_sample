@@ -1,22 +1,21 @@
 import 'package:ecommerce_sample/ApiFunctions/Api.dart';
 import 'package:ecommerce_sample/model/add_to_cart_model.dart';
-import 'package:ecommerce_sample/model/categories_model.dart' as categoryModel;
 import 'package:ecommerce_sample/model/category_products_model.dart';
 import 'package:ecommerce_sample/ui/cart.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';
 
-class CategoryDetails extends StatefulWidget {
+class ProductDetails extends StatefulWidget {
   Data success;
 
-  CategoryDetails(this.success);
+  ProductDetails(this.success);
 
   @override
-  _CategoryDetailsState createState() => _CategoryDetailsState();
+  _ProductDetailsState createState() => _ProductDetailsState();
 }
 
-class _CategoryDetailsState extends State<CategoryDetails> {
+class _ProductDetailsState extends State<ProductDetails> {
   AddToCartModel cart;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<ScaffoldState> scafoldState = new GlobalKey<ScaffoldState>();
@@ -98,18 +97,18 @@ class _CategoryDetailsState extends State<CategoryDetails> {
         child: categoryProductsList.length == 0
             ? Center(child: Container(child: Text("Loading data ..")))
             : Form(
-          key: formKey,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: ListView.builder(
-                    itemCount: 1,
-                    itemBuilder: (context ,index){
-                      return Body(index);
-                    },
-                  ),
-                )
+            key: formKey,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: ListView.builder(
+                itemCount: 1,
+                itemBuilder: (context ,index){
+                  return Body(index);
+                },
               ),
+            )
+        ),
       ),
     );
   }
@@ -278,7 +277,7 @@ class _CartCounterState extends State<CartCounter> {
       children: [
         buildOutLineButton(
           Icons.remove,
-          () {
+              () {
             if (noOfItems > 1) {
               setState(() {
                 noOfItems--;
@@ -292,7 +291,7 @@ class _CartCounterState extends State<CartCounter> {
         ),
         buildOutLineButton(
           Icons.add,
-          () {
+              () {
             setState(() {
               noOfItems++;
             });
