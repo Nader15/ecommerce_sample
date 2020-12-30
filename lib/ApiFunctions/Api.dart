@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:ecommerce_sample/ApiFunctions/sharedPrefClass.dart';
+import 'package:ecommerce_sample/model/AttendListModel.dart';
 import 'package:ecommerce_sample/model/add_to_cart_model.dart';
 import 'package:ecommerce_sample/model/cart_content_model.dart';
 import 'package:ecommerce_sample/model/categories_model.dart';
@@ -19,8 +20,9 @@ class Api {
   final String products = "products";
   final String addToCartLink = "add/cart";
   final String cartLink = "cart";
-
-  BuildContext context;
+  final String attend = "add/attends";
+  final String attends = "attends";
+   BuildContext context;
 
   Api(@required this.context);
 
@@ -49,7 +51,31 @@ class Api {
       return false;
     }
   }
+  Future getAttendanceApi(GlobalKey<ScaffoldState> _scaffoldKey) async {
+    XsProgressHud.show(context);
 
+    final String completeUrl = baseUrl + attends;
+
+    final response = await http.get(
+      completeUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+    Map<String, dynamic> dataContent = json.decode(response.body);
+    XsProgressHud.hide();
+    if (response.statusCode == 200) {
+      return AttendListModel.fromJson(dataContent);
+    } else if (response.statusCode == 401) {
+      clearAllData();
+
+      navigateAndClearStack(context, Error401Page());
+    } else {
+      CustomSnackBar(_scaffoldKey, json.decode(response.body).toString());
+      return false;
+    }
+  }
   Future categoryProductsApi(GlobalKey<ScaffoldState> _scaffoldKey) async {
     XsProgressHud.show(context);
 
@@ -101,13 +127,39 @@ class Api {
     }
   }
 
-  Future addToCart(GlobalKey<ScaffoldState> _scaffoldKey) async {
+  Future attendAndGo(GlobalKey<ScaffoldState> _scaffoldKey,String type) async {
+    XsProgressHud.show(context);
+    final String apiUrl = baseUrl + attend;
+    var data = {
+      "time":DateTime.now().toString(),
+      "type":type
+    };
+    var userToJson = json.encode(data);
+    final response = await http.post(
+      apiUrl,
+      headers: {"Content-Type": "application/json"},
+      body: userToJson,
+    );
+    Map<String, dynamic> dataContent = json.decode(response.body);
+    XsProgressHud.hide();
+    if (response.statusCode == 200) {
+      print( "body :"+json.decode(response.body).toString());
+      return true;
+    } else {
+      print( "body :"+json.decode(response.body).toString());
+      CustomSnackBar(_scaffoldKey,
+          json.decode(response.body).toString());
+      return false;
+    }
+  }
+
+  Future addToCart(GlobalKey<ScaffoldState> _scaffoldKey,int productId) async {
     XsProgressHud.show(context);
     final String apiUrl = baseUrl + addToCartLink;
     var data = {
       "user_id": "12321",
-      "product_id": 1,
-      "amount": 2
+      "product_id": productId,
+      "amount": 1
     };
     var userToJson = json.encode(data);
     final response = await http.post(
@@ -119,7 +171,7 @@ class Api {
     XsProgressHud.hide();
     if (response.statusCode == 200) {
       CustomSnackBar(_scaffoldKey,
-          json.decode(response.body).toString());
+          json.decode(response.body)['success'].toString());
       print(json.decode(response.body));
       return AddToCartModel.fromJson(dataContent);
     } else {

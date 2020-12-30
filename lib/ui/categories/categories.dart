@@ -1,5 +1,8 @@
 import 'package:ecommerce_sample/ApiFunctions/Api.dart';
-import 'package:ecommerce_sample/model/categories_model.dart'as category;
+import 'package:ecommerce_sample/ApiFunctions/sharedPrefClass.dart';
+import 'package:ecommerce_sample/model/categories_model.dart' as category;
+import 'package:ecommerce_sample/ui/AttendAndGo/DrawerWidget.dart';
+ import 'package:ecommerce_sample/ui/cart.dart';
 import 'package:ecommerce_sample/ui/subcategories/category_products.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
@@ -14,25 +17,26 @@ class Categories extends StatefulWidget {
 class _CategoriesState extends State<Categories> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   category.CategoriesModel categoriesModel;
-  List <category.Success> categoriesList=List();
+  List<category.Success> categoriesList = List();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed( Duration(milliseconds: 0), () {
-      gettingData();
+    Future.delayed(Duration(milliseconds: 0), () {
+      getUserAttend(context).then((value) {
+        gettingData();
+      });
 
     });
 //    showHud();
   }
-  gettingData(){
+
+  gettingData() {
     setState(() {
       Api(context).categoriesApi(_scaffoldKey).then((value) {
-
-        categoriesModel=value;
+        categoriesModel = value;
         categoriesModel.success.forEach((element) {
-
           setState(() {
             categoriesList.add(element);
           });
@@ -40,27 +44,29 @@ class _CategoriesState extends State<Categories> {
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Container(
+          width: MediaQuery.of(context).size.width/2,
+          child: DrawerWidget()),
       key: _scaffoldKey,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.black),
+
         backgroundColor: whiteColor,
         elevation: 0,
-        leading: Icon(
-          Icons.keyboard_backspace,
-          color: greyColorXd,
+        centerTitle: true,
+        title: Text(
+          "categories",
+          style: TextStyle(color: Colors.black),
         ),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.search,
-              color: greyColorXd,
-            ),
-          ),
-          IconButton(
-            onPressed: () {},
+            onPressed: () {
+              navigateAndKeepStack(context, Cart());
+            },
             icon: Icon(
               Icons.shopping_cart,
               color: greyColorXd,
@@ -73,42 +79,38 @@ class _CategoriesState extends State<Categories> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Categories",
-              style: TextStyle(
-                  color: blackColor, fontSize: 20, fontWeight: FontWeight.bold),
-            ),
             SizedBox(
               height: 30,
             ),
-            categoriesList.length==0
+            categoriesList.length == 0
                 ? Center(
-                  child: Container(
-              child: Text("No data found"),
-            ),
-                )
+                    child: Container(
+                      child: Text("No data found"),
+                    ),
+                  )
                 : Expanded(
-              child: GridView.builder(
-                itemCount: categoriesList.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.70,
-                  mainAxisSpacing: 0.3,
-                  crossAxisSpacing: 20,
-                ),
-                itemBuilder: (context, index) {
-                  return Category(index);
-                },
-              ),
-            ),
+                    child: GridView.builder(
+                      itemCount: categoriesList.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.70,
+                        mainAxisSpacing: 0.3,
+                        crossAxisSpacing: 20,
+                      ),
+                      itemBuilder: (context, index) {
+                        return Category(index);
+                      },
+                    ),
+                  ),
           ],
         ),
       ),
     );
   }
-  Widget Category(int index){
+
+  Widget Category(int index) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         navigateAndKeepStack(context, CategoryProducts(categoriesList[index]));
       },
       child: Column(
@@ -120,7 +122,8 @@ class _CategoriesState extends State<Categories> {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(15),
                 image: DecorationImage(
-                  image: NetworkImage("https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"),
+                  image: NetworkImage(
+                      "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"),
                   fit: BoxFit.cover,
                 )),
           ),
@@ -135,6 +138,7 @@ class _CategoriesState extends State<Categories> {
       ),
     );
   }
+
   Future<void> showMessageHud() async {
     XsProgressHud.showMessage(context, "Flutter app");
   }
