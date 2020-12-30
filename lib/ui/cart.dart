@@ -47,79 +47,61 @@ class _CartState extends State<Cart> {
           backgroundColor: Colors.grey,
           elevation: 0,
           leading: IconButton(
-            onPressed:(){
+            onPressed: () {
               Navigator.pop(context);
             },
             icon: Icon(
               Icons.keyboard_backspace,
             ),
           ),
-         title: Text("Cart"),
+          actions: [
+            Center(child: Text(cartList.length.toString())),
+            IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Icons.shopping_cart,
+              ),
+            ),
+          ],
+          title: Text("Cart"),
           centerTitle: true,
         ),
         body: Container(
-          child:  cartList.length==0
+          child: cartList.length == 0
               ? Center(
-            child: Container(
-              child: Text("No data found"),
-            ),
-          )
+                  child: Container(
+                    child: Text("No data found"),
+                  ),
+                )
               : Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: GridView.builder(
-                itemCount: cartList.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1,
-                  childAspectRatio: 4,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: .5,
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: GridView.builder(
+                      itemCount: cartList.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 1,
+                        childAspectRatio: 4,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: .5,
+                      ),
+                      itemBuilder: (context, index) {
+                        return CartList(index);
+                      },
+                    ),
+                  ),
                 ),
-                itemBuilder: (context, index) {
-                  return CartList(index);
-                },
-              ),
-            ),
-          ),
         ));
   }
 
   Widget CartList(int index) {
-    return ListTile(
-      onTap: () {},
-      leading: Container(
-        height: 100,
-        width: 100,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            image: DecorationImage(
-              image: NetworkImage(
-                  "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"),
-              fit: BoxFit.cover,
-            )),
-      ),
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "${cartList[index].product.name}",
-            style: TextStyle(fontSize: 18, color: blackColor),
-          ),
-          Row(
-            children: [
-              Text(
-                "Amount ",
-                style: TextStyle(fontSize: 18, color: blackColor),
-              ),
-              Text(
-                "(${cartList[index].amount})",
-                style: TextStyle(fontSize: 20, color: blackColor),
-              ),
-            ],
-          ),
-          Row(
+    return Column(
+      children: [
+        ListTile(
+          subtitle: Row(
             children: [
               Text(
                 "Price ",
@@ -131,20 +113,54 @@ class _CartState extends State<Cart> {
               ),
             ],
           ),
-        ],
-      ),
-      trailing: Container(
-        height: 40,
-        width: 48,
-        child: IconButton(
-          onPressed: (){},
-          icon: Icon(
-            Icons.remove_circle_outline,
-            color: redColor,
-            size: 25,
+          onTap: () {},
+          leading: Container(
+            height: 100,
+            width: 100,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                image: DecorationImage(
+                  image: NetworkImage(
+                      "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"),
+                  fit: BoxFit.cover,
+                )),
           ),
-        )
-      ),
+          title: Text(
+            "${cartList[index].product.name}",
+            style: TextStyle(fontSize: 18, color: blackColor),
+          ),
+          trailing: GestureDetector(
+            onTap: (){},
+            child: Container(
+              height: 40,
+              width: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "${cartList[index].amount}",
+                    style: TextStyle(fontSize: 20, color: blackColor),
+                  ),
+                  Container(
+                    width: 25,
+                    height: 25,
+                    decoration: BoxDecoration(
+                      color: grey,
+                      shape: BoxShape.circle
+                    ),
+                    child: Icon(
+                      Icons.edit_outlined,
+                      color: whiteColor,
+                      size: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Divider(),
+      ],
     );
   }
 }

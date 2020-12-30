@@ -1,4 +1,5 @@
 import 'package:ecommerce_sample/ApiFunctions/Api.dart';
+import 'package:ecommerce_sample/model/add_to_cart_model.dart';
 import 'package:ecommerce_sample/model/categories_model.dart' as categoryModel;
 import 'package:ecommerce_sample/model/category_products_model.dart';
 import 'package:ecommerce_sample/ui/cart.dart';
@@ -17,7 +18,9 @@ class CategoryProducts extends StatefulWidget {
 }
 
 class _CategoryProductsState extends State<CategoryProducts> {
+  AddToCartModel cart;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   ProductsModel productsModel;
   List<Data> categoryProductsList = List();
 
@@ -49,7 +52,9 @@ class _CategoryProductsState extends State<CategoryProducts> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      floatingActionButton: FloatingActionButton(backgroundColor: Colors.green,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green,
+        onPressed: () {},
         child: InkWell(
             onTap: () {
               navigateAndKeepStack(context, Cart());
@@ -63,9 +68,15 @@ class _CategoryProductsState extends State<CategoryProducts> {
           "products",
           style: TextStyle(color: Colors.black),
         ),
-        leading: IconButton(icon: Icon(Icons.arrow_back,color: Colors.black,),onPressed: (){
-          Navigator.of(context).pop();
-        },),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         centerTitle: true,
       ),
       body: categoryProductsList.length == 0
@@ -93,10 +104,8 @@ class _CategoryProductsState extends State<CategoryProducts> {
     return Column(
       children: [
         ListTile(
-          // onTap: () {
-          //   navigateAndKeepStack(
-          //       context, CategoryDetails(categoryProductsList[index]));
-          // },
+          onTap: () {
+          },
           leading: Container(
             height: 80,
             width: 100,
@@ -124,29 +133,77 @@ class _CategoryProductsState extends State<CategoryProducts> {
               ),
             ],
           ),
-          trailing: InkWell(
-            onTap: () {
-              Api(context)
-                  .addToCart(_scaffoldKey, categoryProductsList[index].id)
-                  .then((value) {
-
-              });
-            },
-            child: Container(
-              height: 40,
-              width: 48,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: Colors.black)),
-              child: Icon(
-                Icons.shopping_cart,
-                color: Colors.green,
-                size: 25,
-              ),
-            ),
+          trailing: Container(
+            width: 80,
+            height: 50,
+            child: CartCounter(index: index),
           ),
         ),
         Divider()
+      ],
+    );
+  }
+}
+
+class CartCounter extends StatefulWidget {
+  int index ;
+  CartCounter({this.index});
+
+  @override
+  _CartCounterState createState() => _CartCounterState();
+}
+class _CartCounterState extends State<CartCounter> {
+  int noOfItems = 00;
+  AddToCartModel cart;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  ProductsModel productsModel;
+  List<Data> categoryProductsList = List();
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+       GestureDetector(
+         onTap: (){
+           if (noOfItems > 0) {
+             setState(() {
+               noOfItems--;
+             });
+           }
+         },
+         child: Container(
+           decoration: BoxDecoration(
+             shape: BoxShape.circle,
+             border: Border.all(color: grey)
+           ),
+           child: Icon(Icons.remove,)
+         ),
+       ),
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Text(noOfItems.toString().padLeft(2, "0")),
+        ),
+        GestureDetector(
+          onTap: (){
+            setState(() {
+              noOfItems++;
+              Api(context)
+                  .addToCart(_scaffoldKey, categoryProductsList[index].id)
+                  .then((value) {
+                if (value is AddToCartModel) {
+                  cart = value;
+                }
+              });
+            });
+          },
+          child: Container(
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: grey)
+              ),
+              child: Icon(Icons.add,)
+          ),
+        ),
       ],
     );
   }
