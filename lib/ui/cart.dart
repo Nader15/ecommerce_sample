@@ -149,7 +149,7 @@ class _CartState extends State<Cart> {
                       shape: BoxShape.circle
                     ),
                     child: Icon(
-                      Icons.edit_outlined,
+                      Icons.edit,
                       color: whiteColor,
                       size: 20,
                     ),

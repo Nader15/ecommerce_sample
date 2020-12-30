@@ -26,11 +26,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         children: [
 
           SizedBox(height: 30,),
-          GlobalVars.Userattend=='1'?Container():    Card(child: ListTile(onTap: (){
+         Userattend=='1'?Container():    Card(child: ListTile(onTap: (){
             Api(context).attendAndGo(_scaffoldKey, "start").then((value) {
               setState(() {
                 setUserAttend(auth_token: "1").then((value){
-                  GlobalVars.Userattend="1";
+                  Userattend="1";
                 });
               });
             });
@@ -41,15 +41,15 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
             onTap: (){
 
-              print("UserattendUserattend:: ${ GlobalVars.Userattend}");
-              if( GlobalVars.Userattend.isEmpty){
+              print("UserattendUserattend:: ${  Userattend}");
+              if(  Userattend.isEmpty){
                 CustomSnackBar(_scaffoldKey,"من فضلك اولا سجل حضور ");
               }
               else {
                 Api(context).attendAndGo(_scaffoldKey, "end").then((value) {
                   setState(() {
                     clearAllData();
-                    GlobalVars.Userattend="";
+                    Userattend="";
                   });
                 });
               }
