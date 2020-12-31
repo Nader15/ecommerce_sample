@@ -2,7 +2,9 @@ import 'package:ecommerce_sample/ApiFunctions/Api.dart';
 
 import 'package:ecommerce_sample/model/cart_content_model.dart';
 import 'package:ecommerce_sample/model/cart_content_model.dart';
+import 'package:ecommerce_sample/ui/categories/categories.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
+import 'package:ecommerce_sample/utils/global_vars.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +18,7 @@ class _CartState extends State<Cart> {
   CartContentModel cartContentModel;
   List<Success> cartList = List();
 
-
+  var totalPrice = 0.0;
 
   @override
   void initState() {
@@ -30,22 +32,30 @@ class _CartState extends State<Cart> {
 
   gettingData() {
     setState(() {
+      cartList = List();
       Api(context).cartContent(_scaffoldKey).then((value) {
         cartContentModel = value;
         cartContentModel.success.forEach((element) {
           setState(() {
+            print("idid:: ${element.productId}");
+            print("amountamount:: ${element.amount}");
             cartList.add(element);
           });
         });
+        getTotalPrice();
       });
     });
   }
-  var totalPrice=0;
-  getTotalPrice(){
-    for (int i =0 ; i<cartList.length;i++)
-      {
-        totalPrice = totalPrice;
-      }
+
+  getTotalPrice() {
+    totalPrice=0.0;
+    for (int i = 0; i < cartList.length; i++) {
+      setState(() {
+        totalPrice += (double.parse((cartList[i].product.price)) *
+            double.parse(cartList[i].amount.toString()));
+        print("totalPrice::: ${totalPrice}");
+      });
+    }
   }
 
   @override
@@ -64,7 +74,7 @@ class _CartState extends State<Cart> {
             ),
           ),
           actions: [
-            Center(child: Text(cartList.length.toString())),
+            Center(child: Text(totalCount.toString())),
             IconButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -89,10 +99,11 @@ class _CartState extends State<Cart> {
                     children: [
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height/1.5,
+                        height: MediaQuery.of(context).size.height / 1.3,
                         child: GridView.builder(
                           itemCount: cartList.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 1,
                             childAspectRatio: 4,
                             mainAxisSpacing: 10,
@@ -103,9 +114,34 @@ class _CartState extends State<Cart> {
                           },
                         ),
                       ),
-                      Text("Total Cost",style: TextStyle(fontSize: 20),),
-                      getTotalPrice(),
-                      Text(cartList[index],style: TextStyle(fontSize: 20),),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Api(context).orderCartApi(_scaffoldKey).then((value) {
+                            totalCount = 0;
+                            navigateAndClearStack(context, Categories());
+                          });
+                        },
+                        child: Container(
+                          color: Colors.green,
+                          width: MediaQuery.of(context).size.width,
+                          height: 50,
+                          child: Center(
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("Total Cost  ${totalPrice}"),
+                              Text("Pay  ${totalPrice}"),
+                            ],
+                          )),
+                        ),
+                      )
+                      // Text("Total Cost",style: TextStyle(fontSize: 20),),
+                      // //
+                      // Text("${totalPrice}",style: TextStyle(fontSize: 20),),
                     ],
                   ),
                 ),
@@ -123,7 +159,7 @@ class _CartState extends State<Cart> {
                 style: TextStyle(fontSize: 18, color: blackColor),
               ),
               Text(
-                "\$${cartList[index].product.price}",
+                "${cartList[index].product.price}",
                 style: TextStyle(fontSize: 20, color: blackColor),
               ),
             ],
@@ -136,7 +172,14 @@ class _CartState extends State<Cart> {
                 borderRadius: BorderRadius.circular(5),
                 image: DecorationImage(
                   image: NetworkImage(
-                      "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"),
+                      cartList[index].product.photo==null?
+                      "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
+
+                          : dataBaseUrl+  cartList[index].product.photo
+
+                      // "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
+
+                  ),
                   fit: BoxFit.cover,
                 )),
           ),
@@ -144,33 +187,66 @@ class _CartState extends State<Cart> {
             "${cartList[index].product.name}",
             style: TextStyle(fontSize: 18, color: blackColor),
           ),
-          trailing: GestureDetector(
-            onTap: (){},
-            child: Container(
-              height: 40,
-              width: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "${cartList[index].amount}",
-                    style: TextStyle(fontSize: 20, color: blackColor),
-                  ),
-                  Container(
-                    width: 25,
-                    height: 25,
-                    decoration: BoxDecoration(
-                      color: grey,
-                      shape: BoxShape.circle
-                    ),
-                    child: Icon(
-                      Icons.edit,
-                      color: whiteColor,
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
+          trailing: Container(
+            width: 80,
+            height: 50,
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    if (cartList[index].amount > 0) {
+                      setState(() {
+                        totalCount--;
+                        cartList[index].amount--;
+
+                        Api(context)
+                            .editcartApi(_scaffoldKey, cartList[index].productId,
+                                cartList[index].amount)
+                            .then((value) {
+                          gettingData();
+                        });
+                      });
+                    }
+                  },
+                  child: Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: grey)),
+                      child: Icon(
+                        Icons.remove,
+                      )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text(cartList[index]
+                      .amount
+
+                      .toString()
+                      .padLeft(2, "0")),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      cartList[index].amount++;
+                      totalCount++;
+                      print("widget::${cartList[index].amount}");
+                      Api(context)
+                          .editcartApi(_scaffoldKey, cartList[index].productId,
+                              cartList[index].amount)
+                          .then((value) {
+                        gettingData();
+                      });
+                    });
+                  },
+                  child: Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: grey)),
+                      child: Icon(
+                        Icons.add,
+                      )),
+                ),
+              ],
             ),
           ),
         ),

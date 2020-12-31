@@ -36,7 +36,7 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   gettingData() {
     setState(() {
-      Api(context).categoryProductsApi(_scaffoldKey).then((value) {
+      Api(context).categoryProductsApi(_scaffoldKey,widget.success.id).then((value) {
         productsModel = value;
         productsModel.success.data.forEach((element) {
           setState(() {

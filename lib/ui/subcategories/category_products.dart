@@ -38,7 +38,7 @@ class _CategoryProductsState extends State<CategoryProducts> {
 
   gettingData() {
     setState(() {
-      Api(context).categoryProductsApi(_scaffoldKey).then((value) {
+      Api(context).categoryProductsApi(_scaffoldKey,widget.success.id).then((value) {
         productsModel = value;
         productsModel.success.data.forEach((element) {
           setState(() {
@@ -82,7 +82,7 @@ class _CategoryProductsState extends State<CategoryProducts> {
           Center(child: Text( totalCount.toString(),style: TextStyle(color: Colors.grey),)),
           IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              navigateAndKeepStack(context, Cart());
             },
             icon: Icon(
               Icons.shopping_cart,color: Colors.grey,
@@ -125,7 +125,12 @@ class _CategoryProductsState extends State<CategoryProducts> {
                 borderRadius: BorderRadius.circular(5),
                 image: DecorationImage(
                   image: NetworkImage(
-                      "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"),
+
+                      categoryProductsList[index].photo==null?
+                      "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
+
+                          : dataBaseUrl+  categoryProductsList[index].photo
+                  ),
                   fit: BoxFit.cover,
                 )),
           ),
@@ -140,7 +145,7 @@ class _CategoryProductsState extends State<CategoryProducts> {
                 style: TextStyle(fontSize: 18, color: Colors.black),
               ),
               Text(
-                "\$ " + "${categoryProductsList[index].price}",
+                   "${categoryProductsList[index].price}",
                 style: TextStyle(fontSize: 20, color: Colors.black),
               ),
             ],
@@ -156,6 +161,10 @@ class _CategoryProductsState extends State<CategoryProducts> {
                       setState(() {
                         totalCount--;
                         categoryProductsList[index].count--;
+
+                        Api(context).editcartApi(_scaffoldKey, categoryProductsList[index].id, categoryProductsList[index].count).then((value) {
+
+                        });
                       });
                     }
                   },
@@ -176,7 +185,8 @@ class _CategoryProductsState extends State<CategoryProducts> {
                     setState(() {
                       categoryProductsList[index].count++;
                      totalCount++;
-                      print("widget::${categoryProductsList[index].count}");
+                      print("widgetcount::  ${categoryProductsList[index].count}");
+                      print("widgetcount::  ${categoryProductsList[index].count}");
                       Api(context)
                           .addToCart(_scaffoldKey, categoryProductsList[index].id)
                           .then((value) {

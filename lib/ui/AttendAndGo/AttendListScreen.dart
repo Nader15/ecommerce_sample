@@ -44,7 +44,7 @@ class _AttendListScreenState extends State<AttendListScreen> {
       body: Container(
         child: attendaceList.length == 0
             ? Container(
-                child: Text("No data found"),
+                child: Center(child: Text("No data found")),
               )
             : ListView.builder(
                 itemCount: attendaceList.length,

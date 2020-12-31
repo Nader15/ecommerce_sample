@@ -2,6 +2,7 @@
 import 'package:ecommerce_sample/ApiFunctions/Api.dart';
 import 'package:ecommerce_sample/ApiFunctions/sharedPrefClass.dart';
 import 'package:ecommerce_sample/ui/AttendAndGo/AttendListScreen.dart';
+import 'package:ecommerce_sample/ui/Orders.dart';
 import 'package:ecommerce_sample/utils/custom_widgets/cusstom_snackBar.dart';
 import 'package:ecommerce_sample/utils/global_vars.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
@@ -29,9 +30,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
          Userattend=='1'?Container():    Card(child: ListTile(onTap: (){
             Api(context).attendAndGo(_scaffoldKey, "start").then((value) {
               setState(() {
+                Userattend="1";
+              });
                 setUserAttend(auth_token: "1").then((value){
-                  Userattend="1";
-                });
+
               });
             });
           },title: Text("تسجيل حضور",textAlign: TextAlign.center,),trailing: Icon(Icons.image),)),
@@ -65,6 +67,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             },
             title: Text("قائمة الحضور والانصراف",textAlign: TextAlign.center,),trailing: Icon(Icons.list),)),
 
+          SizedBox(height: 30,),
+
+          Card(child: ListTile(
+            onTap: (){
+              navigateAndKeepStack(context, OrdersListScreen());
+
+            },
+            title: Text("الطلبات",textAlign: TextAlign.center,),trailing: Icon(Icons.list),)),
 
         ],
       ),
