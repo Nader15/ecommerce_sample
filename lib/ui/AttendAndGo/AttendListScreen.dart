@@ -11,6 +11,8 @@ class _AttendListScreenState extends State<AttendListScreen> {
   AttendListModel attendListModel;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<AttendData> attendaceList = List();
+  int productPageIndex = 1;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -22,12 +24,15 @@ class _AttendListScreenState extends State<AttendListScreen> {
   }
 
   gettingData() {
-    Api(context).getAttendanceApi(_scaffoldKey).then((value) {
+    Api(context).getAttendanceApi(_scaffoldKey,productPageIndex).then((value) {
       attendListModel = value;
+      setState(() {
       attendListModel.success.data.forEach((element) {
-        setState(() {
+
           attendaceList.add(element);
         });
+      // attendaceList=attendaceList.reversed.toList();
+
       });
     });
   }
@@ -46,20 +51,34 @@ class _AttendListScreenState extends State<AttendListScreen> {
             ? Container(
                 child: Center(child: Text("No data found")),
               )
-            : ListView.builder(
-                itemCount: attendaceList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Column(
-                    children: [
-                      ListTile(
-                        title: Text(attendaceList[index].type),
-                        subtitle: Text(attendaceList[index].time.split(" ")[1]),
-                        trailing: attendaceList[index].type=='start'?Icon(Icons.image,color: Colors.green,):Icon(Icons.exit_to_app,color: Colors.red,),
-                      ),
-                      Divider()
-                    ],
-                  );
-                }),
+            : RefreshIndicator(
+              onRefresh: () {
+                return Future.delayed(
+                    Duration.zero, (){
+                  setState(() {
+                    attendaceList = List();
+                    productPageIndex=1;
+
+                    gettingData();
+
+                  });
+                });
+              },
+              child: ListView.builder(
+                  itemCount: attendaceList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Column(
+                      children: [
+                        ListTile(
+                          title: Text(attendaceList[index].type),
+                          subtitle: Text("${attendaceList[index].time.split(" ")[0]} ${attendaceList[index].time.split(" ")[1]}"),
+                          trailing: attendaceList[index].type=='start'?Icon(Icons.image,color: Colors.green,):Icon(Icons.exit_to_app,color: Colors.red,),
+                        ),
+                        Divider()
+                      ],
+                    );
+                  }),
+            ),
       ),
     );
   }

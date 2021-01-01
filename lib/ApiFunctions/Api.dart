@@ -54,10 +54,10 @@ class Api {
       return false;
     }
   }
-  Future getAttendanceApi(GlobalKey<ScaffoldState> _scaffoldKey) async {
+  Future getAttendanceApi(GlobalKey<ScaffoldState> _scaffoldKey,int pageIndex) async {
     XsProgressHud.show(context);
 
-    final String completeUrl = baseUrl + attends;
+    final String completeUrl = baseUrl + attends+"?page=$pageIndex";
 
     final response = await http.get(
       completeUrl,

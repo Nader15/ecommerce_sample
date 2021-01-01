@@ -60,7 +60,7 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
                       children: [
                         Text(orderList[index].createdAt.split("T")[0]+"  ${orderList[index].createdAt.split("T")[1].split(":")[0]} : ${orderList[index].createdAt.split("T")[1].split(":")[1]}"),
 
-                        Text("${(double.parse(orderList[index].amount.toString())*double.parse(orderList[index].product.price))}")
+                        Text("  جنيه ${(double.parse(orderList[index].amount.toString())*double.parse(orderList[index].product.price))}")
                       ],
                     ),
                     trailing: Text(orderList[index].amount.toString()),
