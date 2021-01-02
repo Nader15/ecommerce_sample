@@ -21,6 +21,7 @@ class Api {
   final String createProducts = "product/category/";
   final String addToCartLink = "add/cart";
   final String cartLink = "cart";
+  final String removecartLink = "remove/cart";
   final String edit_cart = "edit/cart";
   final String orderCart = "order/cart";
   final String attend = "add/attends";
@@ -121,6 +122,35 @@ class Api {
     if (response.statusCode == 200) {
       print( "body :"+json.decode(response.body).toString());
       return OrdersListModel.fromJson(dataContent);
+    } else {
+      print( "body :"+json.decode(response.body).toString());
+      CustomSnackBar(_scaffoldKey,
+          json.decode(response.body).toString());
+      return false;
+    }
+  }
+  Future removeFromCartContent(GlobalKey<ScaffoldState> _scaffoldKey,int Id) async {
+    XsProgressHud.show(context);
+
+    print(baseUrl + removecartLink+"/$Id");
+    final String apiUrl = baseUrl + removecartLink+"/$Id";
+    var data = {
+      "user_id": "12321"
+    };
+    var userToJson = json.encode(data);
+    final response = await http.post(
+      apiUrl,
+      headers: {"Content-Type": "application/json"},
+      body: userToJson,
+    );
+    Map<String, dynamic> dataContent = json.decode(response.body);
+
+
+    print("dataContent:: ${dataContent}");
+    XsProgressHud.hide();
+    if (response.statusCode == 200) {
+      print( "body :"+json.decode(response.body).toString());
+      return true;
     } else {
       print( "body :"+json.decode(response.body).toString());
       CustomSnackBar(_scaffoldKey,

@@ -7,6 +7,7 @@ import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/global_vars.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class Cart extends StatefulWidget {
   @override
@@ -48,7 +49,7 @@ class _CartState extends State<Cart> {
   }
 
   getTotalPrice() {
-    totalPrice=0.0;
+    totalPrice = 0.0;
     for (int i = 0; i < cartList.length; i++) {
       setState(() {
         totalPrice += (double.parse((cartList[i].product.price)) *
@@ -110,7 +111,33 @@ class _CartState extends State<Cart> {
                             crossAxisSpacing: .5,
                           ),
                           itemBuilder: (context, index) {
-                            return CartList(index);
+                            return Slidable(
+                                actionPane: SlidableDrawerActionPane(),
+                                actions: <Widget>[
+                                  IconSlideAction(
+
+                                    onTap: () {
+                                      Api(context)
+                                          .removeFromCartContent(
+                                              _scaffoldKey, cartList[index].productId)
+                                          .then((value) {
+
+                                        gettingData();
+                                      });
+                                    },
+                                    caption: 'delete',
+                                    foregroundColor: Colors.white,
+                                    color: Colors.white,
+                                    iconWidget: Container(
+
+                                        child: Icon(
+                                          Icons.delete_outline,
+                                          color: Colors.redAccent,
+                                          size: 25,
+                                        )),
+                                  ),
+                                ],
+                                child: CartList(index));
                           },
                         ),
                       ),
@@ -171,15 +198,13 @@ class _CartState extends State<Cart> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 image: DecorationImage(
-                  image: NetworkImage(
-                      cartList[index].product.photo==null?
-                      "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
-
-                          : dataBaseUrl+  cartList[index].product.photo
+                  image: NetworkImage(cartList[index].product.photo == null
+                          ? "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
+                          : dataBaseUrl + cartList[index].product.photo
 
                       // "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
 
-                  ),
+                      ),
                   fit: BoxFit.cover,
                 )),
           ),
@@ -194,19 +219,31 @@ class _CartState extends State<Cart> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    if (cartList[index].amount > 0) {
+                    if(cartList[index].amount==1){
+                      Api(context)
+                          .removeFromCartContent(
+                          _scaffoldKey, cartList[index].productId)
+                          .then((value) {
+
+                        gettingData();
+                      });
+                    }
+                    else if (cartList[index].amount > 0) {
                       setState(() {
                         totalCount--;
                         cartList[index].amount--;
 
                         Api(context)
-                            .editcartApi(_scaffoldKey, cartList[index].productId,
+                            .editcartApi(
+                                _scaffoldKey,
+                                cartList[index].productId,
                                 cartList[index].amount)
                             .then((value) {
                           gettingData();
                         });
                       });
                     }
+
                   },
                   child: Container(
                       decoration: BoxDecoration(
@@ -218,11 +255,8 @@ class _CartState extends State<Cart> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: Text(cartList[index]
-                      .amount
-
-                      .toString()
-                      .padLeft(2, "0")),
+                  child:
+                      Text(cartList[index].amount.toString().padLeft(2, "0")),
                 ),
                 GestureDetector(
                   onTap: () {
