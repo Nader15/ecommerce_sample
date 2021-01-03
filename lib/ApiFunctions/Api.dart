@@ -107,9 +107,11 @@ class Api {
   }
   Future ordersListApi(GlobalKey<ScaffoldState> _scaffoldKey) async {
     XsProgressHud.show(context);
-    final String apiUrl = baseUrl + "order/1";
+
+    print("toIso8601String:: ${DateTime.now().toIso8601String().split("T")[0]}");
+    final String apiUrl = baseUrl + "order/day";
     var data = {
-      "user_id": "12321"
+      "date": DateTime.now().toIso8601String().split("T")[0]
     };
     var userToJson = json.encode(data);
     final response = await http.post(
