@@ -5,7 +5,7 @@ void CustomSnackBar(GlobalKey<ScaffoldState> scaffoldKey,String content){
   scaffoldKey.currentState.showSnackBar(
       SnackBar(
         backgroundColor: Colors.white,
-        duration: Duration(seconds: 3),
+        duration: Duration(seconds: 1),
         elevation: 6.0,
         behavior: SnackBarBehavior.floating,
         content: Row(

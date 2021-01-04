@@ -41,8 +41,8 @@ class _CartState extends State<Cart> {
             print("idid:: ${element.productId}");
             print("amountamount:: ${element.amount}");
             cartList.add(element);
-            OderedProductAmount = element.amount;
           });
+          OderedProductAmount = element.amount;
         });
         getTotalPrice();
       });
