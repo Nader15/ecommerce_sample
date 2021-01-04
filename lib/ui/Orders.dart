@@ -2,6 +2,7 @@ import 'package:ecommerce_sample/ApiFunctions/Api.dart';
 import 'package:ecommerce_sample/model/AttendListModel.dart';
 import 'package:ecommerce_sample/model/OrdersListModel.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class OrdersListScreen extends StatefulWidget {
   @override
@@ -27,8 +28,17 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
       orderListModel = value;
       orderListModel.success.forEach((element) {
         setState(() {
+          // DateFormat format = new DateFormat("HH:mm:ss");
+          // DateTime time = format.parse(element.createdAt.split("T")[1]);
+          // time.toLocal();
+          //
+          // print("toLocal:: ${ time.toLocal()}");
           orderList.add(element);
         });
+      });
+
+      setState(() {
+        orderList = orderList.reversed.toList();
       });
     });
   }
@@ -39,36 +49,45 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.black),
-
-        centerTitle: true,title: Text("الطلبات",style: TextStyle(color: Colors.black),),),
+        centerTitle: true,
+        title: Text(
+          "الطلبات",
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
       key: _scaffoldKey,
       body: Container(
         child: orderList.length == 0
             ? Container(
-          child: Center(child: Text("No data found")),
-        )
+                child: Center(child: Text("No data found")),
+              )
             : ListView.builder(
-            itemCount: orderList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Column(
-                children: [
-                  ListTile(
-                    title: Text(orderList[index].product.name),
-                    subtitle: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(orderList[index].createdAt.split("T")[0]+"  ${orderList[index].createdAt.split("T")[1].split(":")[0]} : ${orderList[index].createdAt.split("T")[1].split(":")[1]}"),
-
-                        Text("  جنيه ${(double.parse(orderList[index].amount.toString())*double.parse(orderList[index].product.price))}")
-                      ],
-                    ),
-                    trailing: Text(orderList[index].amount.toString()),
-                  ),
-                  Divider()
-                ],
-              );
-            }),
+                itemCount: orderList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: [
+                      ListTile(
+                        title: orderList[index].product == null
+                            ? Text("")
+                            : Text(orderList[index].product.name ?? ""),
+                        subtitle: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(orderList[index].createdAt.split("T")[0] +
+                                " ${(int.parse(orderList[index].createdAt.split("T")[1].split(":")[0]) + 2) > 24 ? ( (int.parse(orderList[index].createdAt.split("T")[1].split(":")[0]) + 2)-2) : (int.parse(orderList[index].createdAt.split("T")[1].split(":")[0]) + 2)} : ${orderList[index].createdAt.split("T")[1].split(":")[1]}"),
+                            orderList[index].product == null
+                                ? Text("")
+                                : Text(
+                                    "  جنيه ${(double.parse(orderList[index].amount.toString()) * double.parse(orderList[index].product.price))}")
+                          ],
+                        ),
+                        trailing: Text(orderList[index].amount.toString()),
+                      ),
+                      Divider()
+                    ],
+                  );
+                }),
       ),
     );
   }
