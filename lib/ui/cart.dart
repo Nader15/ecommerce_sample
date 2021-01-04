@@ -3,6 +3,7 @@ import 'package:ecommerce_sample/ApiFunctions/Api.dart';
 import 'package:ecommerce_sample/model/cart_content_model.dart';
 import 'package:ecommerce_sample/model/cart_content_model.dart';
 import 'package:ecommerce_sample/ui/categories/categories.dart';
+import 'package:ecommerce_sample/ui/receipt.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/global_vars.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
@@ -40,6 +41,7 @@ class _CartState extends State<Cart> {
             print("idid:: ${element.productId}");
             print("amountamount:: ${element.amount}");
             cartList.add(element);
+            OderedProductAmount = element.amount;
           });
         });
         getTotalPrice();
@@ -56,6 +58,10 @@ class _CartState extends State<Cart> {
         print("totalPrice::: ${totalPrice}");
       });
     }
+    setState(() {
+      TotalPrice = totalPrice;
+      CartListVar = cartList;
+    });
   }
 
   @override
@@ -121,7 +127,7 @@ class _CartState extends State<Cart> {
                         onTap: () {
                           Api(context).orderCartApi(_scaffoldKey).then((value) {
                             totalCount = 0;
-                            navigateAndClearStack(context, Categories());
+                            navigateAndKeepStack(context, Receipt());
                           });
                         },
                         child: Container(
@@ -184,7 +190,7 @@ class _CartState extends State<Cart> {
                 )),
           ),
           title: Text(
-            "${cartList[index].product.name}",
+            "${cartList[index].product.name_ar}",
             style: TextStyle(fontSize: 18, color: blackColor),
           ),
           trailing: Container(

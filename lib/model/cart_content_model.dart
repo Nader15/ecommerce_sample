@@ -73,6 +73,7 @@ class Product {
   dynamic createdAt;
   String updatedAt;
   String name;
+  String name_ar;
   String description;
   int sold;
   int amount;
@@ -89,6 +90,7 @@ class Product {
         this.createdAt,
         this.updatedAt,
         this.name,
+        this.name_ar,
         this.description,
         this.sold,
         this.amount,
@@ -105,6 +107,7 @@ class Product {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     name = json['name'];
+    name_ar = json['name_ar'];
     description = json['description'];
     sold = json['sold'];
     amount = json['amount'];
@@ -123,6 +126,7 @@ class Product {
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['name'] = this.name;
+    data['name_ar'] = this.name_ar;
     data['description'] = this.description;
     data['sold'] = this.sold;
     data['amount'] = this.amount;
