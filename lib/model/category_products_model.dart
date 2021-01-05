@@ -105,6 +105,7 @@ class Data {
   dynamic createdAt;
   dynamic updatedAt;
   String name;
+  String nameAr;
   String description;
   int sold;
   int amount;
@@ -124,6 +125,7 @@ class Data {
         this.createdAt,
         this.updatedAt,
         this.name,
+        this.nameAr,
         this.description,
         this.sold,
         this.amount,
@@ -142,6 +144,7 @@ class Data {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     name = json['name'];
+    nameAr = json['name_ar'];
     description = json['description'];
     sold = json['sold'];
     amount = json['amount'];

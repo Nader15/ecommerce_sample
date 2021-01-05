@@ -75,11 +75,13 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(orderList[index].createdAt.split("T")[0] +
-                                " ${(int.parse(orderList[index].createdAt.split("T")[1].split(":")[0]) + 2) > 24 ? ( (int.parse(orderList[index].createdAt.split("T")[1].split(":")[0]) + 2)-2) : (int.parse(orderList[index].createdAt.split("T")[1].split(":")[0]) + 2)} : ${orderList[index].createdAt.split("T")[1].split(":")[1]}"),
+                                "${(int.parse(orderList[index].createdAt.split("T")[1].split(":")[0]) + 2) > 24 ? ( (int.parse(orderList[index].createdAt.split("T")[1].split(":")[0]) + 2)-2) : (int.parse(orderList[index].createdAt.split("T")[1].split(":")[0]) + 2)} : ${orderList[index].createdAt.split("T")[1].split(":")[1]}"),
                             orderList[index].product == null
+
                                 ? Text("")
-                                : Text(
-                                    "  جنيه ${(double.parse(orderList[index].amount.toString()) * double.parse(orderList[index].product.price))}")
+
+                                : Text("  جنيه ${(double.parse(orderList[index].amount.toString()) * double.parse(orderList[index].product.price))}")
+
                           ],
                         ),
                         trailing: Text(orderList[index].amount.toString()),

@@ -135,7 +135,7 @@ class _CategoryProductsState extends State<CategoryProducts> {
                 )),
           ),
           title: Text(
-            "${categoryProductsList[index].name}",
+            "${categoryProductsList[index].nameAr}",
             style: TextStyle(fontSize: 18, color: Colors.black),
           ),
           subtitle: Row(
