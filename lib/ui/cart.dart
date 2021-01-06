@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:ecommerce_sample/ApiFunctions/Api.dart';
 
 import 'package:ecommerce_sample/model/cart_content_model.dart';
@@ -9,6 +11,7 @@ import 'package:ecommerce_sample/utils/global_vars.dart';
 import 'package:ecommerce_sample/utils/navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:usb_serial/usb_serial.dart';
 
 class Cart extends StatefulWidget {
   @override
@@ -21,6 +24,39 @@ class _CartState extends State<Cart> {
   List<Success> cartList = List();
 
   var totalPrice = 0.0;
+
+
+
+  getting()async{
+    List<UsbDevice> devices = await UsbSerial.listDevices();
+    print(devices);
+
+    UsbPort port;
+    if (devices.length == 0) {
+      return;
+    }
+    port = await devices[0].create();
+
+    bool openResult = await port.open();
+    if ( !openResult ) {
+      print("Failed to open");
+      return;
+    }
+
+    await port.setDTR(true);
+    await port.setRTS(true);
+
+    port.setPortParameters(115200, UsbPort.DATABITS_8,
+        UsbPort.STOPBITS_1, UsbPort.PARITY_NONE);
+
+    // print first result and close port.
+    port.inputStream.listen((Uint8List event) {
+      print(event);
+      port.close();
+    });
+
+    await port.write(Uint8List.fromList([0x10, 0x00]));
+  }
 
   @override
   void initState() {
@@ -62,7 +98,9 @@ class _CartState extends State<Cart> {
     setState(() {
       TotalPrice = totalPrice;
       CartListVar = cartList;
+
     });
+    getting();
   }
 
   @override
@@ -152,9 +190,10 @@ class _CartState extends State<Cart> {
                       ),
                       InkWell(
                         onTap: () {
+
                           Api(context).orderCartApi(_scaffoldKey).then((value) {
                             totalCount = 0;
-                            navigateAndKeepStack(context, Receipt());
+                            navigateAndKeepStack(context, Receipt(totalPrice,cartList));
                           });
                         },
                         child: Container(
