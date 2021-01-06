@@ -123,16 +123,22 @@ class _CategoryProductsState extends State<CategoryProducts> {
             width: 100,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                image: DecorationImage(
-                  image: NetworkImage(
-
-                      categoryProductsList[index].photo==null?
-                      "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
-
-                          : dataBaseUrl+  categoryProductsList[index].photo
-                  ),
-                  fit: BoxFit.cover,
-                )),
+                // image: DecorationImage(
+                //   image: NetworkImage(
+                //
+                //       categoryProductsList[index].photo==null?
+                //       "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
+                //
+                //           : dataBaseUrl+  categoryProductsList[index].photo
+                //   ),
+                //   fit: BoxFit.cover,
+                // ),
+            ),
+            child: FadeInImage(
+              placeholder: AssetImage("assets/images/loading.jpg",),
+              image: NetworkImage(dataBaseUrl+  categoryProductsList[index].photo),
+              fit: BoxFit.cover,
+            ),
           ),
           title: Text(
             "${categoryProductsList[index].nameAr}",

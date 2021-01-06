@@ -2,7 +2,7 @@ import 'package:ecommerce_sample/ApiFunctions/Api.dart';
 import 'package:ecommerce_sample/ApiFunctions/sharedPrefClass.dart';
 import 'package:ecommerce_sample/model/categories_model.dart' as category;
 import 'package:ecommerce_sample/ui/AttendAndGo/DrawerWidget.dart';
- import 'package:ecommerce_sample/ui/cart.dart';
+import 'package:ecommerce_sample/ui/cart.dart';
 import 'package:ecommerce_sample/ui/subcategories/category_products.dart';
 import 'package:ecommerce_sample/utils/colors_file.dart';
 import 'package:ecommerce_sample/utils/global_vars.dart';
@@ -20,6 +20,7 @@ class _CategoriesState extends State<Categories> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   category.CategoriesModel categoriesModel;
   List<category.Success> categoriesList = List();
+
   Future<bool> onWillPop(BuildContext context) async {
     showDialog(
       context: context,
@@ -51,7 +52,7 @@ class _CategoriesState extends State<Categories> {
                               width: 1,
                               color: Colors
                                   .grey //                   <--- border width here
-                          ),
+                              ),
                         ),
                         child: Text(
                           "Exit",
@@ -73,7 +74,7 @@ class _CategoriesState extends State<Categories> {
                               width: 1,
                               color: Colors
                                   .grey //                   <--- border width here
-                          ),
+                              ),
                         ),
                         child: Text(
                           "Cancel",
@@ -101,7 +102,6 @@ class _CategoriesState extends State<Categories> {
       getUserAttend(context).then((value) {
         gettingData();
       });
-
     });
 //    showHud();
   }
@@ -123,15 +123,13 @@ class _CategoriesState extends State<Categories> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () => onWillPop(context),
-
       child: Scaffold(
         drawer: Container(
-            width: MediaQuery.of(context).size.width/2,
+            width: MediaQuery.of(context).size.width / 2,
             child: DrawerWidget()),
         key: _scaffoldKey,
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
-
           backgroundColor: whiteColor,
           elevation: 0,
           centerTitle: true,
@@ -139,19 +137,22 @@ class _CategoriesState extends State<Categories> {
             "categories",
             style: TextStyle(color: Colors.black),
           ),
-
           actions: [
-            Center(child: Text( totalCount.toString(),style: TextStyle(color: Colors.grey),)),
+            Center(
+                child: Text(
+              totalCount.toString(),
+              style: TextStyle(color: Colors.grey),
+            )),
             IconButton(
               onPressed: () {
                 navigateAndKeepStack(context, Cart());
               },
               icon: Icon(
-                Icons.shopping_cart,color: Colors.grey,
+                Icons.shopping_cart,
+                color: Colors.grey,
               ),
             ),
           ],
-
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
@@ -199,18 +200,22 @@ class _CategoriesState extends State<Categories> {
             height: 180,
             width: 160,
             decoration: BoxDecoration(
-                color: Colors.green,
-                borderRadius: BorderRadius.circular(15),
-                image: DecorationImage(
-                  image: NetworkImage(
-                      categoriesList[index].logo==null?
-                      "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
-
-                          : dataBaseUrl+  categoriesList[index].logo
-
-                  ),
-                  fit: BoxFit.cover,
-                )),
+              borderRadius: BorderRadius.circular(15),
+              // image: DecorationImage(
+              //   image: NetworkImage(
+              //       categoriesList[index].logo==null?
+              //       "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
+              //           : dataBaseUrl+  categoriesList[index].logo
+              //
+              //   ),
+              //   fit: BoxFit.cover,
+              // ),
+            ),
+            child: FadeInImage(
+              placeholder: AssetImage("assets/images/loading.jpg",),
+              image: NetworkImage(dataBaseUrl + categoriesList[index].logo),
+              fit: BoxFit.cover,
+            ),
           ),
           SizedBox(
             height: 5,

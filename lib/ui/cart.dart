@@ -25,9 +25,7 @@ class _CartState extends State<Cart> {
 
   var totalPrice = 0.0;
 
-
-
-  getting()async{
+  getting() async {
     List<UsbDevice> devices = await UsbSerial.listDevices();
     print(devices);
 
@@ -38,7 +36,7 @@ class _CartState extends State<Cart> {
     port = await devices[0].create();
 
     bool openResult = await port.open();
-    if ( !openResult ) {
+    if (!openResult) {
       print("Failed to open");
       return;
     }
@@ -46,8 +44,8 @@ class _CartState extends State<Cart> {
     await port.setDTR(true);
     await port.setRTS(true);
 
-    port.setPortParameters(115200, UsbPort.DATABITS_8,
-        UsbPort.STOPBITS_1, UsbPort.PARITY_NONE);
+    port.setPortParameters(
+        115200, UsbPort.DATABITS_8, UsbPort.STOPBITS_1, UsbPort.PARITY_NONE);
 
     // print first result and close port.
     port.inputStream.listen((Uint8List event) {
@@ -98,7 +96,6 @@ class _CartState extends State<Cart> {
     setState(() {
       TotalPrice = totalPrice;
       CartListVar = cartList;
-
     });
     getting();
   }
@@ -159,13 +156,11 @@ class _CartState extends State<Cart> {
                                 actionPane: SlidableDrawerActionPane(),
                                 actions: <Widget>[
                                   IconSlideAction(
-
                                     onTap: () {
                                       Api(context)
-                                          .removeFromCartContent(
-                                              _scaffoldKey, cartList[index].productId)
+                                          .removeFromCartContent(_scaffoldKey,
+                                              cartList[index].productId)
                                           .then((value) {
-
                                         gettingData();
                                       });
                                     },
@@ -173,12 +168,11 @@ class _CartState extends State<Cart> {
                                     foregroundColor: Colors.white,
                                     color: Colors.white,
                                     iconWidget: Container(
-
                                         child: Icon(
-                                          Icons.delete_outline,
-                                          color: Colors.redAccent,
-                                          size: 25,
-                                        )),
+                                      Icons.delete_outline,
+                                      color: Colors.redAccent,
+                                      size: 25,
+                                    )),
                                   ),
                                 ],
                                 child: CartList(index));
@@ -190,10 +184,10 @@ class _CartState extends State<Cart> {
                       ),
                       InkWell(
                         onTap: () {
-
                           Api(context).orderCartApi(_scaffoldKey).then((value) {
                             totalCount = 0;
-                            navigateAndKeepStack(context, Receipt(totalPrice,cartList));
+                            navigateAndKeepStack(
+                                context, Receipt(totalPrice, cartList));
                           });
                         },
                         child: Container(
@@ -241,17 +235,25 @@ class _CartState extends State<Cart> {
             height: 100,
             width: 100,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                image: DecorationImage(
-                  image: NetworkImage(cartList[index].product.photo == null
-                          ? "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
-                          : dataBaseUrl + cartList[index].product.photo
-
-                      // "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
-
-                      ),
-                  fit: BoxFit.cover,
-                )),
+              borderRadius: BorderRadius.circular(5),
+              // image: DecorationImage(
+              //   image: NetworkImage(cartList[index].product.photo == null
+              //           ? "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
+              //           : dataBaseUrl + cartList[index].product.photo
+              //
+              //       // "https://forums.oscommerce.com/uploads/monthly_2017_12/C_member_309126.png"
+              //
+              //       ),
+              //   fit: BoxFit.cover,
+              // ),
+            ),
+            child: FadeInImage(
+              placeholder: AssetImage(
+                "assets/images/loading.jpg",
+              ),
+              image: NetworkImage(dataBaseUrl + cartList[index].product.photo),
+              fit: BoxFit.cover,
+            ),
           ),
           title: Text(
             "${cartList[index].product.name_ar}",
@@ -264,16 +266,14 @@ class _CartState extends State<Cart> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    if(cartList[index].amount==1){
+                    if (cartList[index].amount == 1) {
                       Api(context)
                           .removeFromCartContent(
-                          _scaffoldKey, cartList[index].productId)
+                              _scaffoldKey, cartList[index].productId)
                           .then((value) {
-
                         gettingData();
                       });
-                    }
-                    else if (cartList[index].amount > 0) {
+                    } else if (cartList[index].amount > 0) {
                       setState(() {
                         totalCount--;
                         cartList[index].amount--;
@@ -288,7 +288,6 @@ class _CartState extends State<Cart> {
                         });
                       });
                     }
-
                   },
                   child: Container(
                       decoration: BoxDecoration(
